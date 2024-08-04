@@ -7,8 +7,8 @@ use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::handlers::{
-    login_handler::login_handler, readyz_handler::readyz_handler, score_handler::score_handler,
-    users_handler::get_users_data,
+    login_handler::login_handler, protected_handler::protected_route,
+    readyz_handler::readyz_handler, score_handler::score_handler, users_handler::get_users_data,
 };
 use crate::AppState;
 
@@ -27,6 +27,7 @@ pub fn init_router(app_state: AppState) -> Router {
         .route("/score", post(score_handler))
         .route("/users", post(get_users_data))
         .route("/login", post(login_handler))
+        .route("/protected", post(protected_route))
         .with_state(app_state)
         .layer(TraceLayer::new_for_http())
 }

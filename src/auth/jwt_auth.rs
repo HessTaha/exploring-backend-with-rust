@@ -1,8 +1,7 @@
+use crate::models::users::LoginData;
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
-
-use crate::models::users::LoginData;
 
 #[derive(Serialize, Deserialize)]
 pub struct Claims {
@@ -25,7 +24,7 @@ pub fn get_jwt(user: LoginData) -> Result<String, String> {
     token
 }
 
-pub fn decode_jwt(token: &str) -> Result<LoginData, String> {
+pub fn decode_jwt(token: &str) -> Result<LoginData, jsonwebtoken::errors::Error> {
     let token_data = decode::<LoginData>(
         &token,
         &DecodingKey::from_secret("mysercret".as_ref()),
@@ -35,6 +34,6 @@ pub fn decode_jwt(token: &str) -> Result<LoginData, String> {
     match token_data {
         Ok(token_data) => Ok(token_data.claims),
 
-        Err(e) => Err(e.to_string()),
+        Err(e) => Err(e),
     }
 }

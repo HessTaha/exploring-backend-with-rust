@@ -33,3 +33,9 @@ get_login_response: ## runs a post request to /login endpoint
 	-H 'Content-Type: application/json' \
 	-H 'Accept: application/json' \
 	-d '{"email": "Jamaican.brotha@gmail.com"}'
+
+get_protected_response: ## runs a post request to /login endpoint
+	curl -X POST localhost:8080/protected \
+	-H 'Content-Type: application/json' \
+	-H 'Accept: application/json' \
+	-H 'Authorization: Bearer <TOKEN HERE>'
