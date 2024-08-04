@@ -35,7 +35,7 @@ pub async fn protected_route(header: HeaderMap) -> Response<String> {
                 json!({
                     "sucess": false,
                     "data": {
-                        "message" : "UNAUTHORIZED"
+                        "message" : format!("Error : {}", e.to_string())
                     }
                 })
                 .to_string(),

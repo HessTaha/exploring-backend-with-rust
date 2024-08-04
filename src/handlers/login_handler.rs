@@ -51,7 +51,7 @@ pub async fn login_handler(
                 json!(
                     {
                         "data": {
-                            "message": "cannot generate token"
+                            "message": format!("Error : {}", error.to_string())
                         },
                         "success": false
                     }
