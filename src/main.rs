@@ -14,7 +14,7 @@ pub struct AppState {
 
 #[tokio::main]
 async fn main() {
-    let database_url = "postgres://initexample:1234@localhost/test_db".to_string();
+    let database_url = "postgres://initexample:1234@db/test_db".to_string();
     let pool = PgPoolOptions::new()
         .max_connections(5)
         .connect(&database_url)
