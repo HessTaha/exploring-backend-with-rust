@@ -1,7 +1,7 @@
-use axum::http::{header::CONTENT_TYPE, HeaderMap, Response, StatusCode};
-use serde_json::json;
+use axum::http::{HeaderMap, Response, StatusCode};
 
 use crate::auth::jwt_auth::decode_jwt;
+use crate::handlers::utils::make_response;
 
 pub async fn protected_route(header: HeaderMap) -> Response<String> {
     let header_token = header
@@ -15,31 +15,16 @@ pub async fn protected_route(header: HeaderMap) -> Response<String> {
     let user = decode_jwt(&token);
 
     match user {
-        Ok(user_claim) => Response::builder()
-            .status(StatusCode::OK)
-            .header(CONTENT_TYPE, "application/json")
-            .body(
-                json!({
-                    "success": true,
-                    "data":{
-                            "message": format!("Hello uuser {:?}", user_claim.email)
-                    }
-                } )
-                .to_string(),
-            )
-            .unwrap_or_default(),
-        Err(e) => Response::builder()
-            .status(StatusCode::UNAUTHORIZED)
-            .header(CONTENT_TYPE, "application/json")
-            .body(
-                json!({
-                    "sucess": false,
-                    "data": {
-                        "message" : format!("Error : {}", e.to_string())
-                    }
-                })
-                .to_string(),
-            )
-            .unwrap_or_default(),
+        Ok(user_claim) => make_response(
+            StatusCode::OK,
+            format!("Hello uuser {:?}", user_claim.email),
+            "application/json".to_string(),
+        ),
+
+        Err(e) => make_response(
+            StatusCode::UNAUTHORIZED,
+            format!("Error : {}", e.to_string()),
+            "application/json".to_string(),
+        ),
     }
 }

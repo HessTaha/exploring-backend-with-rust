@@ -1,13 +1,8 @@
-use axum::{
-    extract::State,
-    http::{header::CONTENT_TYPE, StatusCode},
-    response::Response,
-    Json,
-};
-use serde_json::json;
+use axum::{extract::State, http::StatusCode, response::Response, Json};
 use sqlx::query_as;
 
 use crate::auth::jwt_auth::get_jwt;
+use crate::handlers::utils::make_response;
 use crate::models::users::LoginData;
 use crate::AppState;
 
@@ -26,39 +21,16 @@ pub async fn login_handler(
     match query_result {
         Ok(user) => {
             let token = get_jwt(user);
-            Response::builder()
-                .status(StatusCode::OK)
-                .header(CONTENT_TYPE, "application/json")
-                .body(
-                    json!(
-                        {
-                            "data": {
-                                "message": token.unwrap()
-                            },
-                            "success": true
-                        }
-
-                    )
-                    .to_string(),
-                )
-                .unwrap_or_default()
-        }
-
-        Err(error) => Response::builder()
-            .status(StatusCode::OK)
-            .header(CONTENT_TYPE, "application/json")
-            .body(
-                json!(
-                    {
-                        "data": {
-                            "message": format!("Error : {}", error.to_string())
-                        },
-                        "success": false
-                    }
-
-                )
-                .to_string(),
+            make_response(
+                StatusCode::OK,
+                token.unwrap(),
+                "application/json".to_string(),
             )
-            .unwrap_or_default(),
+        }
+        Err(error) => make_response(
+            StatusCode::NOT_FOUND,
+            format!("Error : {}", error.to_string()),
+            "application/json".to_string(),
+        ),
     }
 }

@@ -26,11 +26,9 @@ pub async fn get_users_data(
         age: query_result.age.expect("Missing age"),
         profession: query_result.profession.unwrap(),
     };
-    let response = Response::builder()
+    Response::builder()
         .status(StatusCode::OK)
         .header(CONTENT_TYPE, "appplication/json")
         .body(json!(user).to_string())
-        .unwrap_or_default();
-
-    response
+        .unwrap_or_default()
 }

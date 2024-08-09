@@ -2,15 +2,16 @@
 help:  ## Show this help.
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
-start-db-service: ## start postgres db with docker-compose
+start-service: ## start postgres db and api backend with docker-compose
 	docker-compose -f docker-compose.yaml up
 
-restart-db-service: clean-db-service ## delete and start postgres db with docker-compose
+restart-service: clean-db-service ## delete and start postgres db with docker-compose
 	docker-compose -f docker-compose.yaml up
 
-clean-db-service: ## delete postgres db (containers + volumes)
+clean-service: ## delete postgres db (containers + volumes)
 	docker-compose stop
 	docker container rm postgres_db
+	docker container rm api
 	docker volume prune -a
 
 get_readyz_response: ## runs a get request to /readyz_endpoint
@@ -38,4 +39,4 @@ get_protected_response: ## runs a post request to /login endpoint
 	curl -X POST localhost:8080/protected \
 	-H 'Content-Type: application/json' \
 	-H 'Accept: application/json' \
-	-H 'Authorization: Bearer <TOKEN HERE>'
+	-H 'Authorization: Bearer <TOKEN>'

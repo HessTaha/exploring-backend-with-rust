@@ -4,6 +4,7 @@ mod models;
 mod routers;
 
 use axum;
+use std::env;
 
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 
@@ -14,7 +15,7 @@ pub struct AppState {
 
 #[tokio::main]
 async fn main() {
-    let database_url = "postgres://initexample:1234@db/test_db".to_string();
+    let database_url = env::var("DATABASE_URL").unwrap();
     let pool = PgPoolOptions::new()
         .max_connections(5)
         .connect(&database_url)
